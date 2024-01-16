@@ -32,14 +32,23 @@ jobs:
       - name: Make Bootstrap Package
         run: make package
       
+      - name: Debug: List Contents Before Extract
+        run: ls -R packages
+        
       - name: Extract Version from Bootstrap.tipa
         run: |
           mkdir extracted
           unzip -q packages/Bootstrap.tipa -d extracted
+          debug_contents=$(ls -R extracted)
+          echo "Debug: Extracted Contents - $debug_contents"
           version=$(defaults read extracted/Payload/Bootstrap.app/Info.plist CFBundleShortVersionString)
           echo "Version extracted: $version"
           echo "::set-env name=RELEASE_VERSION::$version"
           rm -rf extracted  # Remove the extracted directory
+
+- name: Debug: List Contents After Extract
+  run: ls -R packages
+
 
       - name: Create new release
         uses: ncipollo/release-action@v1
